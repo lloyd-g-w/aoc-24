@@ -11,8 +11,6 @@ class Solution {
         std::vector<int> list2;
     };
 
-    Input input;
-
     Solution() {
         std::string line;
         while (std::getline(std::cin, line)) {
@@ -50,6 +48,9 @@ class Solution {
 
         return similarity;
     }
+
+  private:
+    Input input;
 };
 
 int main(void) {
