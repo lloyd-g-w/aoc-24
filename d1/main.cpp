@@ -25,18 +25,14 @@ class Solution {
     }
 
     int diff_sum() {
-        std::vector<int> result;
         std::sort(input.list1.begin(), input.list1.end());
         std::sort(input.list2.begin(), input.list2.end());
 
+        int sum = 0;
         for (int i = 0; i < input.list1.size(); i++) {
-            result.push_back(std::abs(input.list1[i] - input.list2[i]));
+            sum += std::abs(input.list1[i] - input.list2[i]);
         }
 
-        int sum = 0;
-        for (int i = 0; i < result.size(); i++) {
-            sum += result[i];
-        }
         return sum;
     }
 
