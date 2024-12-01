@@ -59,7 +59,7 @@ class Solution {
     }
 };
 
-int main() {
+int main(void) {
     Solution solution;
     std::cout << "Part 1 answer: " << solution.diff_sum() << std::endl;
     std::cout << "Part 2 answer: " << solution.similarity() << std::endl;
