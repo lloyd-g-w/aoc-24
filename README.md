@@ -11,6 +11,7 @@
 * Add your provided input to a file named 'input'.
 * Go out one directory (`cd ..`)
 * Run `make run DAY=X`
+Alternatively, build for a day and pipe in a file.
 
 ## Run with sample input
 * Run `make run_sample DAY=X`, where `X` is the day you seek.
