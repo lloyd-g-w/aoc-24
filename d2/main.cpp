@@ -34,7 +34,7 @@ class Solution {
         return false;
     }
 
-    Monotonicity determine_monotonicity(int a, int b) {
+    Monotonicity get_monotonicity(int a, int b) {
         int diff = a - b;
         if (diff < 0) {
             return INCREASING;
@@ -52,7 +52,7 @@ class Solution {
             return false;
         }
 
-        Monotonicity monotonicity = determine_monotonicity(first, second);
+        Monotonicity monotonicity = get_monotonicity(first, second);
         if (monotonicity == NON_MONOTONIC) {
             unsafe_pos = 0;
             return false;
