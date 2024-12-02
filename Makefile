@@ -31,7 +31,7 @@ run: d$(DAY)/$(TARGET)
 
 # Run a specific days's executable using the sample input
 # make run_sample DAY=X
-run_sample: $(DAY)/$(TARGET)
+run_sample: d$(DAY)/$(TARGET)
 	@test -n "d$(DAY)" && cd d$(DAY) && ./$(TARGET) < sample || echo "No target specified or invalid target."
 
 .PHONY: all clean run run_sample
