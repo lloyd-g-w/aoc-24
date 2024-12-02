@@ -27,7 +27,7 @@ class Solution {
         std::sort(input.list2.begin(), input.list2.end());
 
         int sum = 0;
-        for (int i = 0; i < input.list1.size(); i++) {
+        for (size_t i = 0; i < input.list1.size(); i++) {
             sum += std::abs(input.list1[i] - input.list2[i]);
         }
 
@@ -36,13 +36,13 @@ class Solution {
 
     int similarity() {
         std::unordered_map<int, int> hash_map;
-        for (int i = 0; i < input.list1.size(); i++) {
+        for (size_t i = 0; i < input.list1.size(); i++) {
             hash_map[input.list1[i]]++;
         }
 
         int similarity = 0;
 
-        for (int i = 0; i < input.list2.size(); i++) {
+        for (size_t i = 0; i < input.list2.size(); i++) {
             similarity += input.list2[i] * hash_map[input.list2[i]];
         }
 
