@@ -21,18 +21,17 @@ clean:
 	done
 
 # Build a specific days's executable
-# make build DAY=dX
+# make build DAY=X
 build: $(DAY)/$(TARGET)
 
 # Run a specific days's executable
-# make run DAY=dX
-run: $(DAY)/$(TARGET)
-	@echo "Specify the day to run: make run DAY=dX"
-	@test -n "$(DAY)" && cd $(DAY) && ./$(TARGET) < input || echo "No target specified or invalid target."
+# make run DAY=X
+run: d$(DAY)/$(TARGET)
+	@test -n "d$(DAY)" && cd d$(DAY) && ./$(TARGET) < input || echo "No target specified or invalid target."
 
 # Run a specific days's executable using the sample input
-# make run_sample DAY=dX
+# make run_sample DAY=X
 run_sample: $(DAY)/$(TARGET)
-	@test -n "$(DAY)" && cd $(DAY) && ./$(TARGET) < sample || echo "No target specified or invalid target."
+	@test -n "d$(DAY)" && cd d$(DAY) && ./$(TARGET) < sample || echo "No target specified or invalid target."
 
 .PHONY: all clean run run_sample
