@@ -58,8 +58,7 @@ class Solution {
             return false;
         }
 
-        bool valid = true;
-        for (int j = 1; j < level.size() - 1; j++) {
+        for (size_t j = 1; j < level.size() - 1; j++) {
             if (!is_valid_adjacent(level[j], level[j + 1])) {
                 unsafe_pos = j;
                 return false;
@@ -153,7 +152,7 @@ class Solution {
                 continue;
             }
 
-            for (int i = 0; i < level.size(); i++) {
+            for (size_t i = 0; i < level.size(); i++) {
                 std::vector<int> one_removed = level;
                 one_removed.erase(one_removed.begin() + i);
                 int tmp;

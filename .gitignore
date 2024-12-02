@@ -1,4 +1,7 @@
 *.exe
 *.out
+*.o
 *.txt
 input
+sample
+main
