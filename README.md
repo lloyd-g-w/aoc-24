@@ -6,7 +6,7 @@
 ## Build a single day's files
 * Run `make build DAY=X`, where `X` is the day you are looking for.
 
-## Run with **your** input
+## Run with **_your_** input
 * Change into the `dX` directory, where `X` is the day you seek.
 * Add your provided input to a file named 'input'.
 * Go out one directory (`cd ..`)
