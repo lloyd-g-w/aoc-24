@@ -107,6 +107,9 @@ class Solution {
 
         while ((search_pos = text.find(mul_sub, search_pos)) !=
                std::string::npos) {
+
+            // Update the position of the next don't
+            // if search pos is after the last do
             while (search_pos >= do_pos) {
                 dont_pos = text.find(dont_sub, dont_pos);
                 if (dont_pos == std::string::npos) {
@@ -114,6 +117,8 @@ class Solution {
                 } else {
                     dont_pos += DONT_OFFSET;
                 }
+
+                // If dont() is after do() then we need the next do()
                 while (dont_pos >= do_pos && do_pos != INT_MAX) {
                     do_pos = text.find(do_sub, do_pos);
                     if (do_pos == std::string::npos) {
