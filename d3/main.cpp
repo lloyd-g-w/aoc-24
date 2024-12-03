@@ -14,6 +14,8 @@ class Solution {
   private:
     const int MAX_DIGITS = 3;
     const int MUL_OFFSET = 4;
+    const int DO_OFFSET = 4;
+    const int DONT_OFFSET = 7;
 
     std::string text;
     mul_data_t get_mul_data(int &pos, str &text) {
@@ -73,6 +75,28 @@ class Solution {
 
         int search_pos = 0;
         while ((search_pos = text.find(sub, search_pos)) != std::string::npos) {
+            mul_data_t mul_data;
+            mul_data = get_mul_data(search_pos, text);
+            if (mul_data.valid) {
+                res += mul_data.a * mul_data.b;
+                search_pos = mul_data.end + 1;
+            } else {
+                search_pos++;
+            }
+        }
+
+        return res;
+    }
+
+    int mul_sum_cond() {
+        const str mul_sub = "mul(";
+        const str do_sub = "do()";
+        const str dont_sub = "don't()";
+        int res = 0;
+
+        int search_pos = 0;
+        while ((search_pos = text.find(mul_sub, search_pos)) !=
+               std::string::npos) {
             mul_data_t mul_data;
             mul_data = get_mul_data(search_pos, text);
             if (mul_data.valid) {
