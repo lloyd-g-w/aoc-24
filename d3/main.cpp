@@ -1,3 +1,5 @@
+#include <climits>
+#include <cmath>
 #include <iostream>
 #include <vector>
 
@@ -5,8 +7,12 @@ typedef std::string str;
 typedef std::vector<int> vInt;
 struct mul_data_t {
     bool valid;
-    int start;
-    int end;
+    size_t start;
+    size_t end;
+    int a, b;
+};
+
+struct interval {
     int a, b;
 };
 
@@ -18,11 +24,11 @@ class Solution {
     const int DONT_OFFSET = 7;
 
     std::string text;
-    mul_data_t get_mul_data(int &pos, str &text) {
+    mul_data_t get_mul_data(size_t &pos, str &text) {
         int start_pos = pos + MUL_OFFSET;
         int curr_pos = start_pos;
 
-        mul_data_t mul_data = {true, pos, -1, -1, -1};
+        mul_data_t mul_data = {true, pos, pos, -1, -1};
 
         while (std::isdigit(text.at(curr_pos))) {
             if (curr_pos - start_pos > MAX_DIGITS) {
@@ -73,7 +79,7 @@ class Solution {
         const str sub = "mul(";
         int res = 0;
 
-        int search_pos = 0;
+        size_t search_pos = 0;
         while ((search_pos = text.find(sub, search_pos)) != std::string::npos) {
             mul_data_t mul_data;
             mul_data = get_mul_data(search_pos, text);
@@ -94,12 +100,36 @@ class Solution {
         const str dont_sub = "don't()";
         int res = 0;
 
-        int search_pos = 0;
+        size_t search_pos = 0;
+        size_t dont_pos = 0;
+        size_t do_pos = 0;
+        size_t count = 0;
+
         while ((search_pos = text.find(mul_sub, search_pos)) !=
                std::string::npos) {
+            while (search_pos >= do_pos) {
+                dont_pos = text.find(dont_sub, dont_pos);
+                if (dont_pos == std::string::npos) {
+                    dont_pos = INT_MAX;
+                } else {
+                    dont_pos += DONT_OFFSET;
+                }
+                while (dont_pos >= do_pos && do_pos != INT_MAX) {
+                    do_pos = text.find(do_sub, do_pos);
+                    if (do_pos == std::string::npos) {
+                        do_pos = INT_MAX;
+                    } else {
+                        do_pos += DO_OFFSET;
+                    }
+                }
+
+                count++;
+            }
+
             mul_data_t mul_data;
             mul_data = get_mul_data(search_pos, text);
-            if (mul_data.valid) {
+            if (mul_data.valid &&
+                !(search_pos >= dont_pos && search_pos < do_pos)) {
                 res += mul_data.a * mul_data.b;
                 search_pos = mul_data.end + 1;
             } else {
@@ -114,4 +144,5 @@ class Solution {
 int main(void) {
     Solution solution{};
     std::cout << "Part 1 answer: " << solution.mul_sum() << std::endl;
+    std::cout << "Part 2 answer: " << solution.mul_sum_cond() << std::endl;
 }
