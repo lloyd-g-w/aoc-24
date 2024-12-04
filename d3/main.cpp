@@ -47,7 +47,6 @@ class Solution {
         curr_pos++;
 
         start_pos = curr_pos;
-
         while (std::isdigit(text.at(curr_pos))) {
             if (curr_pos - start_pos > MAX_DIGITS) {
                 mul_data.valid = false;
