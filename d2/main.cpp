@@ -3,80 +3,13 @@
 #include <vector>
 
 class Solution {
-  private:
+  public:
     enum Monotonicity { INCREASING, DECREASING, NON_MONOTONIC };
 
     typedef struct Input {
         std::vector<std::vector<int>> reports;
     } Input_t;
 
-    bool is_valid_adjacent(int a, int b) {
-        int diff = std::abs(a - b);
-        if (diff >= 1 && diff <= 3) {
-            return true;
-        }
-        return false;
-    }
-
-    bool is_increasing(int a, int b) {
-        int diff = a - b;
-        if (diff < 0) {
-            return true;
-        }
-        return false;
-    }
-
-    bool is_decreasing(int a, int b) {
-        int diff = a - b;
-        if (diff > 0) {
-            return true;
-        }
-        return false;
-    }
-
-    Monotonicity get_monotonicity(int a, int b) {
-        int diff = a - b;
-        if (diff < 0) {
-            return INCREASING;
-        } else if (diff > 0) {
-            return DECREASING;
-        }
-        return NON_MONOTONIC;
-    }
-
-    bool is_safe_level(std::vector<int> &level, int &unsafe_pos) {
-        int first = level[0], second = level[1];
-
-        if (!is_valid_adjacent(first, second)) {
-            unsafe_pos = 0;
-            return false;
-        }
-
-        Monotonicity monotonicity = get_monotonicity(first, second);
-        if (monotonicity == NON_MONOTONIC) {
-            unsafe_pos = 0;
-            return false;
-        }
-
-        for (size_t j = 1; j < level.size() - 1; j++) {
-            if (!is_valid_adjacent(level[j], level[j + 1])) {
-                unsafe_pos = j;
-                return false;
-            }
-
-            if ((monotonicity == INCREASING &&
-                 !is_increasing(level[j], level[j + 1])) ||
-                (monotonicity == DECREASING &&
-                 !is_decreasing(level[j], level[j + 1]))) {
-                unsafe_pos = j;
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-  public:
     Input input;
 
     Solution() {
@@ -164,6 +97,73 @@ class Solution {
         }
 
         return count;
+    }
+
+  private:
+    bool is_valid_adjacent(int a, int b) {
+        int diff = std::abs(a - b);
+        if (diff >= 1 && diff <= 3) {
+            return true;
+        }
+        return false;
+    }
+
+    bool is_increasing(int a, int b) {
+        int diff = a - b;
+        if (diff < 0) {
+            return true;
+        }
+        return false;
+    }
+
+    bool is_decreasing(int a, int b) {
+        int diff = a - b;
+        if (diff > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    Monotonicity get_monotonicity(int a, int b) {
+        int diff = a - b;
+        if (diff < 0) {
+            return INCREASING;
+        } else if (diff > 0) {
+            return DECREASING;
+        }
+        return NON_MONOTONIC;
+    }
+
+    bool is_safe_level(std::vector<int> &level, int &unsafe_pos) {
+        int first = level[0], second = level[1];
+
+        if (!is_valid_adjacent(first, second)) {
+            unsafe_pos = 0;
+            return false;
+        }
+
+        Monotonicity monotonicity = get_monotonicity(first, second);
+        if (monotonicity == NON_MONOTONIC) {
+            unsafe_pos = 0;
+            return false;
+        }
+
+        for (size_t j = 1; j < level.size() - 1; j++) {
+            if (!is_valid_adjacent(level[j], level[j + 1])) {
+                unsafe_pos = j;
+                return false;
+            }
+
+            if ((monotonicity == INCREASING &&
+                 !is_increasing(level[j], level[j + 1])) ||
+                (monotonicity == DECREASING &&
+                 !is_decreasing(level[j], level[j + 1]))) {
+                unsafe_pos = j;
+                return false;
+            }
+        }
+
+        return true;
     }
 };
 
