@@ -9,6 +9,7 @@
 
 namespace SolutionSpace {
 using namespace std;
+#define ll long long
 
 class Solution {
   public:
@@ -23,7 +24,7 @@ class Solution {
             temp_line.erase(pos, 1);
 
             istringstream iss(temp_line);
-            long num;
+            ll num;
 
             // Get result
             iss >> num;
@@ -38,8 +39,8 @@ class Solution {
         }
     }
 
-    long part_one() {
-        long res = 0;
+    ll part_one() {
+        ll res = 0;
 
         for (const auto &eq : equations) {
             res += get_true_test_val(eq);
@@ -48,8 +49,8 @@ class Solution {
         return res;
     }
 
-    long part_two(void) {
-        long res = 0;
+    ll part_two(void) {
+        ll res = 0;
 
         for (const auto &eq : equations) {
             res += get_true_test_val_with_concat(eq);
@@ -60,8 +61,8 @@ class Solution {
 
   private:
     struct Equation {
-        long result;
-        vector<long> numbers;
+        ll result;
+        vector<ll> numbers;
     };
     enum Operation { ADD, MUL, CONCAT };
     typedef vector<int> vInt;
@@ -69,7 +70,7 @@ class Solution {
 
     vector<Equation> equations;
 
-    long get_true_test_val(const Equation &eq) {
+    ll get_true_test_val(const Equation &eq) {
         for (int num_muls = 0; num_muls < (int)eq.numbers.size(); num_muls++) {
             vector<Operation> operations(eq.numbers.size() - 1, ADD);
 
@@ -78,7 +79,6 @@ class Solution {
             }
 
             do {
-
                 if (evaluate_exp(eq, operations) == eq.result) {
                     return eq.result;
                 }
@@ -88,8 +88,8 @@ class Solution {
         return 0;
     }
 
-    long evaluate_exp(const Equation &eq, const vector<Operation> &operations) {
-        long res = eq.numbers[0];
+    ll evaluate_exp(const Equation &eq, const vector<Operation> &operations) {
+        ll res = eq.numbers[0];
         for (int i = 0; i < (int)operations.size(); i++) {
             if (operations[i] == ADD) {
                 res += eq.numbers[i + 1];
@@ -103,12 +103,16 @@ class Solution {
         return res;
     }
 
-    long concat_op(int a, int b) {
-        int num_digits = log10(b) + 1;
-        return a * pow(10, num_digits) + b;
+    ll concat_op(ll a, ll b) {
+        ll multiplier = 1;
+        while (multiplier <= b) {
+            multiplier *= 10;
+        }
+
+        return a * multiplier + b;
     }
 
-    long get_true_test_val_with_concat(const Equation &eq) {
+    ll get_true_test_val_with_concat(const Equation &eq) {
         for (int num_muls = 0; num_muls < (int)eq.numbers.size(); num_muls++) {
             for (int num_concats = 0;
                  num_concats < (int)eq.numbers.size() - num_muls;
@@ -125,7 +129,6 @@ class Solution {
                 }
 
                 do {
-
                     if (evaluate_exp(eq, operations) == eq.result) {
                         return eq.result;
                     }
