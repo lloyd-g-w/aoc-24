@@ -1,131 +1,234 @@
-#include <algorithm>
 #include <climits>
 #include <cmath>
 #include <cstdio>
 #include <iostream>
 #include <sstream>
 #include <sys/types.h>
-#include <unordered_map>
 #include <vector>
 
 namespace SolutionSpace {
+enum Direction { UP, DOWN, LEFT, RIGHT };
+enum Tile { EMPTY, BARRIER, PLAYER, VISITED };
+enum Method { BRUTE, OPTIMISED };
+struct Point {
+    int row;
+    int col;
+};
+struct Player {
+    Point pos;
+    Direction dir;
+};
+
 using namespace std;
 class Solution {
-
   public:
     Solution() {
-        std::string line;
+        string line;
 
         while (std::getline(std::cin, line)) {
-            if (line.empty()) {
-                break;
+            istringstream iss(line);
+            vector<Tile> row;
+
+            char c;
+            while (iss >> c) {
+                if (c == '.') {
+                    row.push_back(EMPTY);
+                } else if (c == '#') {
+                    row.push_back(BARRIER);
+                } else {
+                    row.push_back(PLAYER);
+                    player.pos = {static_cast<int>(map.size() + 1),
+                                  static_cast<int>(row.size()) - 1};
+                    player.dir = get_player_dir(c);
+                }
             }
-            std::istringstream iss(line);
-            string page;
 
-            std::getline(iss, page, '|');
-            int x = std::stoi(page);
-            std::getline(iss, page, '|');
-            int y = std::stoi(page);
-
-            rule_map[x].push_back(y);
-        }
-
-        while (std::getline(std::cin, line)) {
-            vInt update;
-
-            std::istringstream iss(line);
-            string page;
-            while (std::getline(iss, page, ',')) {
-                update.push_back(std::stoi(page));
-            }
-            updates.push_back(update);
+            map.push_back(row);
         }
     }
 
     int part_one() {
         int res = 0;
+        vector<vector<Tile>> map = this->map;
+        Player player = this->player;
 
-        for (auto update : updates) {
-            bool valid = true;
-            for (size_t i = 0; i < update.size(); i++) {
-                if (!is_valid_page_pos(update, i)) {
-                    valid = false;
-                    break;
+        while (point_in_map(player.pos)) {
+            int row = player.pos.row;
+            int col = player.pos.col;
+
+            if (map[row][col] == BARRIER) {
+                turn_player(player);
+            } else {
+                if (!(map[row][col] == VISITED)) {
+                    map[row][col] = VISITED;
+                    res++;
                 }
             }
-
-            if (valid) {
-                res += update.at(std::floor((update.size() / 2)));
-            }
+            move_player_forwards(player);
         }
 
         return res;
     }
 
-    int part_two() {
-        int res = 0;
-
-        for (auto update : updates) {
-            bool valid = true;
-            for (size_t i = 0; i < update.size(); i++) {
-                if (!is_valid_page_pos(update, i)) {
-                    valid = false;
-                    break;
-                }
-            }
-
-            if (!valid) {
-                std::sort(update.begin(), update.end(),
-                          [this](int a, int b) { return compare_page(a, b); });
-
-                res += update.at(std::floor((update.size() / 2)));
-            }
+    int part_two(Method method) {
+        if (method == BRUTE) {
+            return part_two_brute();
+        } else {
+            return part_two_optimised();
         }
-        return res;
     }
 
   private:
-    typedef std::string string;
-    typedef std::vector<int> vInt;
-    typedef std::vector<string> vString;
+    typedef vector<int> vInt;
+    typedef vector<string> vString;
 
-    typedef std::vector<vInt> vUpdate;
+    vector<vector<Tile>> map;
+    Player player;
 
-    std::unordered_map<int, vInt> rule_map;
-    vUpdate updates;
+    Direction get_player_dir(char c) {
+        switch (c) {
+        case '^':
+            return UP;
+        case 'v':
+            return DOWN;
+        case '<':
+            return LEFT;
+        case '>':
+            return RIGHT;
+        default:
+            return UP;
+        }
+    }
 
-    bool is_valid_page_pos(vInt update, size_t pos) {
-        int page = update.at(pos);
-        for (auto rule : rule_map[page]) {
-            for (size_t i = 0; i < update.size(); i++) {
-                if (update.at(i) == rule && pos > i) {
-                    return false;
+    bool point_in_map(Point p) {
+        int x = p.row;
+        int y = p.col;
+        return x >= 0 && x < static_cast<int>(map.size()) && y >= 0 &&
+               y < static_cast<int>(map[0].size());
+    }
+
+    void turn_player(Player &player) {
+        switch (player.dir) {
+        case UP:
+            player.pos.row++;
+            player.dir = RIGHT;
+            break;
+        case DOWN:
+            player.pos.row--;
+            player.dir = LEFT;
+            break;
+        case LEFT:
+            player.pos.col++;
+            player.dir = UP;
+            break;
+        case RIGHT:
+            player.pos.col--;
+            player.dir = DOWN;
+            break;
+        default:
+            break;
+        }
+    }
+
+    void move_player_forwards(Player &player) {
+        switch (player.dir) {
+        case UP:
+            player.pos.row--;
+            break;
+        case DOWN:
+            player.pos.row++;
+            break;
+        case LEFT:
+            player.pos.col--;
+            break;
+        case RIGHT:
+            player.pos.col++;
+            break;
+        default:
+            break;
+        }
+    }
+
+    bool part_two_is_infinite_loop() {
+        int res = 0;
+        vector<vector<Tile>> map = this->map;
+        Player player = this->player;
+
+        while (point_in_map(player.pos)) {
+            int row = player.pos.row;
+            int col = player.pos.col;
+
+            if (map[row][col] == BARRIER) {
+                turn_player(player);
+            } else {
+                res++;
+            }
+
+            if (res == 10000) {
+                return true;
+            }
+
+            move_player_forwards(player);
+        }
+
+        return false;
+    }
+
+    // oh my brute force
+    int part_two_brute() {
+        int res = 0;
+
+        for (int i = 0; i < static_cast<int>(map.size()); i++) {
+            for (int j = 0; j < static_cast<int>(map[i].size()); j++) {
+
+                if (map[i][j] == BARRIER || map[i][j] == PLAYER) {
+                    continue;
+                } else {
+                    Tile tmp = map[i][j];
+                    map[i][j] = BARRIER;
+                    if (part_two_is_infinite_loop()) {
+                        res++;
+                    }
+                    map[i][j] = tmp;
                 }
             }
         }
 
-        return true;
+        return res;
     }
 
-    bool compare_page(int a, int b) {
-        bool b_in_front = false;
-        for (auto num : rule_map[a]) {
-            if (num == b) {
-                b_in_front = true;
-                break;
+    int part_two_optimised() {
+        int res = 0;
+        vector<vector<Tile>> map = this->map;
+        Player player = this->player;
+
+        while (point_in_map(player.pos)) {
+            int row = player.pos.row;
+            int col = player.pos.col;
+
+            if (map[row][col] == BARRIER) {
+                turn_player(player);
+            } else {
+                if (!(map[row][col] == VISITED)) {
+                    map[row][col] = VISITED;
+                    res++;
+                }
             }
+            move_player_forwards(player);
         }
 
-        return b_in_front;
+        return res;
     }
 };
 
+} // namespace SolutionSpace
+
 int main(void) {
-    Solution solution{};
-    solution.part_one();
+    SolutionSpace::Solution solution;
     std::cout << "Part 1 answer: " << solution.part_one() << std::endl;
-    std::cout << "Part 2 answer: " << solution.part_two() << std::endl;
+    std::cout << "Part 2 brute force answer: "
+              << solution.part_two(SolutionSpace::BRUTE) << std::endl;
+    std::cout << "Part 2 optimised answer: "
+              << solution.part_two(SolutionSpace::OPTIMISED) << std::endl;
     return EXIT_SUCCESS;
 }
-} // namespace SolutionSpace
